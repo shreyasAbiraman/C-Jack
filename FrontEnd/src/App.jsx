@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { SystemProvider } from './context/SystemContext';
 import { ToastProvider } from './context/ToastContext';
@@ -34,7 +34,7 @@ function App() {
             <SimulationProvider>
               <RoleProvider>
                 <VoiceProvider>
-                  <BrowserRouter>
+                  <HashRouter>
                     <Routes>
                       <Route path="/" element={<AppShell />}>
                         <Route index element={<DashboardPage />} />
@@ -55,7 +55,7 @@ function App() {
                         <Route path="*" element={<Navigate to="/" replace />} />
                       </Route>
                     </Routes>
-                  </BrowserRouter>
+                  </HashRouter>
                 </VoiceProvider>
               </RoleProvider>
             </SimulationProvider>
