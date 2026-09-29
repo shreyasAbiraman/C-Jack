@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CJackHardwareTelemetryContract",
+  "description": "Standardized telemetry packet schema between CJack hardware firmware (ESP32/T-Beam) and CJack backend",
+  "type": "object",
+  "required": ["deviceId", "timestamp", "sensors", "cpr", "location", "connectivity", "battery"],
+  "properties": {
+    "deviceId": {
+      "type": "string",
+      "description": "Unique hardware device MAC or identifier (e.g. CJACK-ESP32-01)"
+    },
+    "firmwareVersion": {
+      "type": "string",
+      "description": "Firmware semver installed on MCU",
+      "default": "v1.0.0-hw"
+    },
+    "hardwareSource": {
+      "type": "string",
+      "enum": ["PHYSICAL", "SIMULATED"],
+      "default": "PHYSICAL"
+    },
+    "timestamp": {
+      "type": ["integer", "string"],
+      "description": "Epoch timestamp in milliseconds or ISO8601 string"
+    },
+    "sensors": {
+      "type": "object",
+      "required": ["heartRate", "spo2"],
+      "properties": {
+        "ecg": {
+          "type": ["object", "number"],
+          "properties": {
+            "leadsConnected": { "type": "boolean" },
+            "leadOffPlus": { "type": "boolean" },
+            "leadOffMinus": { "type": "boolean" },
+            "rawMv": { "type": "number" },
+            "signalQuality": { "type": "number", "minimum": 0, "maximum": 100 },
+            "impedanceOhm": { "type": "number" }
+          }
+        },
+        "heartRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300,
+          "description": "Heart rate in beats per minute (BPM)"
+        },
+        "spo2": {
+          "type": ["number", "object"],
+          "description": "Blood oxygen saturation percentage (0-100) or rich object"
+        },
+        "motion": {
+          "type": "object",
+          "properties": {
+            "ax": { "type": "number" },
+            "ay": { "type": "number" },
+            "az": { "type": "number" },
+            "gx": { "type": "number" },
+            "gy": { "type": "number" },
+            "gz": { "type": "number" },
+            "fallDetected": { "type": "boolean" },
+            "posture": { "type": "string" }
+          }
+        },
+        "respiration": {
+          "type": ["object", "number"],
+          "properties": {
+            "rate": { "type": "number", "minimum": 0, "maximum": 80 },
+            "amplitude": { "type": "number" },
+            "pattern": { "type": "string" }
+          }
+        }
+      }
+    },
+    "cpr": {
+      "type": "object",
+      "required": ["active"],
+      "properties": {
+        "active": { "type": "boolean" },
+        "rate": { "type": "number", "minimum": 0, "maximum": 200 },
+        "depth": { "type": "number", "minimum": 0, "maximum": 100 },
+        "force": { "type": "number", "minimum": 0, "maximum": 800 },
+        "compressionCount": { "type": "integer", "minimum": 0 },
+        "motorStatus": { "type": "string" },
+        "driverTempC": { "type": "number" },
+        "fault": { "type": "boolean" }
+      }
+    },
+    "location": {
+      "type": "object",
+      "required": ["latitude", "longitude"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "accuracy": { "type": "number", "minimum": 0 },
+        "fixType": { "type": "string" },
+        "satellites": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "connectivity": {
+      "type": "object",
+      "required": ["gps", "lora", "backend"],
+      "properties": {
+        "gps": { "type": "string" },
+        "lora": { "type": "string" },
+        "backend": { "type": "string" },
+        "loraRssi": { "type": "number" },
+        "loraSnr": { "type": "number" }
+      }
+    },
+    "battery": {
+      "type": ["object", "number"],
+      "description": "Battery charge percentage (0-100) or BMS status object",
+      "properties": {
+        "percentage": { "type": "number", "minimum": 0, "maximum": 100 },
+        "voltage": { "type": "number", "minimum": 0, "maximum": 24 },
+        "currentMa": { "type": "number" },
+        "isCharging": { "type": "boolean" },
+        "status": { "type": "string" },
+        "fault": { "type": "boolean" }
+      }
+    }
+  },
+  "additionalProperties": true
+}
